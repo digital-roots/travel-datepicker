@@ -1,35 +1,179 @@
 @import './base.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+* {
+  --dp-cell-size: 2.8rem;
+  --dp-cell-border-radius: 0;
+  --dp-row-margin: 0;
+  --dp-range-between-dates-background-color: blue;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+.dp__input_wrap {
+  display: none;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+.dp__arrow_top {
+  display: none;
+}
+
+.dp__menu {
+  border: none;
+  box-shadow: 0 15px 30px 10px #00000014;
+}
+
+.dp__month_year_wrap.dp__month_year_wrap {
+  justify-content: center;
+}
+
+.dp__month_year_select {
+  font-weight: bold;
+  font-size: 18px;
+  pointer-events: none;
+  width: auto;
+}
+
+.dp__month_year_select:first-child {
+  justify-content: end;
+}
+
+.dp__month_year_select:last-child {
+  justify-content: start;
+}
+
+.dp__month_year_select:hover {
+  background-color: none;
+  cursor: default;
+}
+
+.dp__menu_inner {
+  padding: 0;
+}
+
+.dp__menu_inner .dp__instance_calendar {
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  margin-left: 1rem;
+  border-left: 1px solid #ddd;
+}
+
+.dp__menu_inner .dp__instance_calendar:first-child {
+  margin-left: 0;
+  border-left: none;
+}
+
+.dp__calendar_header, .dp__calendar_header_item {
+  height: 32px;
+}
+
+.dp__calendar_header_item {
+  padding: 0;
+}
+
+.dp__cell_disabled {
+  background-color: var(--dp-hover-color);
+  border-color: var(--dp-hover-color);
+  color: var(--dp-hover-icon-color);
+  text-decoration: line-through;
+}
+
+.dp__range_between {
+  border-color: var(--dp-primary-color);
+  background-color: var(--dp-primary-color) !important;
+  color: white;
+}
+
+.dp__date_hover_end {
+  background-color: var(--dp-primary-color) !important;
+  border-color: var(--dp-primary-color);
+  color: white !important;
+}
+
+.dp__range_start, .dp__range_end {
+  font-weight: bolder;
+}
+
+.dp__calendar_header_separator {
+  display: none;
+}
+
+.datepicker-header {
+  display: none;
+  width: 100%;
+  height: 3rem;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--dp-border-color);
+}
+
+.datepicker-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--dp-icon-color);
+}
+
+.datepicker-btn.back-btn {
+  background: none;
+  border: none;
+}
+
+.datepicker-btn.clear-btn {
+  background: none;
+  border: none;
+  color: var(--dp-primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.dp__action_row {
+  height: 3rem;
+  border-top: 1px solid var(--dp-border-color);
+}
+
+.dp__action_cancel, .dp__action_select {
+  padding: 1rem;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.dp--arrow-btn-nav[aria-disabled="true"] {
+  display: none;
+}
+
+@media (width < 750px) {
+  * {
+    --dp-menu-padding: 1rem;
+    --dp-cell-size: calc((100vw - 3rem) / 7);
   }
-}
 
-@media (min-width: 1024px) {
-  body {
+  .datepicker-header {
     display: flex;
-    place-items: center;
   }
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  .dp__instance_calendar .dp__menu_inner {
+    overflow-y: scroll;
+    max-height: calc(100vh - 6rem);
+  }
+
+  .dp__menu_inner .dp__instance_calendar {
+    border-left: none;
+    margin-left: 0;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .dp__outer_menu_wrap {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  .dp__menu {
+    height: 100vh;
+  }
+
+  .dp--arrow-btn-nav {
+    display: none;
   }
 }
