@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import VueDatePicker, { PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import VueDatePicker, { type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import './../assets/main.css'
 import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, watch, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef } from 'vue';
 
 const dayNames = [
   'Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
@@ -19,18 +19,12 @@ const maxDate = new Date();
 maxDate.setMonth(maxDate.getMonth() + 12);
 
 const date = ref();
-const startD = ref('');
-const endD = ref('');
 const isMobile = ref(false);
 const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
 
 const emit = defineEmits(['update:modelValue']);
 
 onMounted(() => {
-  const startDate = new Date();
-  const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
-  date.value = [startDate, endDate];
-
   isMobile.value = window.innerWidth < 750;
 
   window.addEventListener("resize", () => {
