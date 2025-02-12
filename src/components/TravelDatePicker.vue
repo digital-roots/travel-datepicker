@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import VueDatePicker, { PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import VueDatePicker, { type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import './../assets/main.css'
+import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, watch, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef } from 'vue';
 
 const dayNames = [
   'Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
@@ -50,7 +50,7 @@ const handleClickOnBackBtn = () => {
 
 const handleClickOnClearBtn = () => {
   if (datePicker.value) {
-    datePicker.value.updateInternalModelValue(null);
+    datePicker.value.clearValue();
   }
 }
 
