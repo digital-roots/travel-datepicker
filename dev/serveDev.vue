@@ -49,8 +49,20 @@ const formatDateString = (dateObj) => {
     <div class="dev-example">
       <h1>Travel DatePicker</h1>
       <div>
-        <input type="text" v-model="startD" name="" id="" @click="onDateInputClick">
-        <input type="text" v-model="endD" name="" id="" @click="onDateInputClick">
+        <input
+          id=""
+          v-model="startD"
+          type="text"
+          name=""
+          @click="onDateInputClick"
+        >
+        <input
+          id=""
+          v-model="endD"
+          type="text"
+          name=""
+          @click="onDateInputClick"
+        >
         <travel-datepicker
           ref="travel-datepicker"
           @update:model-value="handleUpdateOnDatePicker"
