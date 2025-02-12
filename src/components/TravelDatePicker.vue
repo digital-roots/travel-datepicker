@@ -19,18 +19,12 @@ const maxDate = new Date();
 maxDate.setMonth(maxDate.getMonth() + 12);
 
 const date = ref();
-const startD = ref('');
-const endD = ref('');
 const isMobile = ref(false);
 const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
 
 const emit = defineEmits(['update:modelValue']);
 
 onMounted(() => {
-  const startDate = new Date();
-  const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
-  date.value = [startDate, endDate];
-
   isMobile.value = window.innerWidth < 750;
 
   window.addEventListener("resize", () => {
@@ -67,33 +61,41 @@ defineExpose({
 
 <template>
   <VueDatePicker
-    class="travel-datepicker"
     ref="datepicker"
     v-model="date"
-    range
-    :auto-apply="!isMobile"
+    class="travel-datepicker"
     month-name-format="long"
     locale="es"
     hide-offset-dates
     prevent-min-max-navigation
     week-start="0"
-    :multi-calendars="isMobile ? 12 : 2"
+    cancel-text="Cancelar"
+    select-text="Listo"
+    range
+    :auto-apply="!isMobile"
     :enable-time-picker="false"
-    :dayNames="dayNames"
+    :multi-calendars="isMobile ? 12 : 2"
+    :day-names="dayNames"
     :min-date="minDate"
     :max-date="maxDate"
     :month-change-on-scroll="false"
     :config="config"
-    cancel-text="Cancelar"
-    select-text="Listo"
     @update:model-value="handleUpdateOnDatePicker"
   >
     <template #menu-header>
       <div class="datepicker-header">
-        <button class="datepicker-btn back-btn" @click="handleClickOnBackBtn">
+        <button
+          class="datepicker-btn back-btn"
+          @click="handleClickOnBackBtn"
+        >
           <ArrowLeft />
         </button>
-        <button class="datepicker-btn clear-btn" @click="handleClickOnClearBtn">Limpiar</button>
+        <button
+          class="datepicker-btn clear-btn"
+          @click="handleClickOnClearBtn"
+        >
+          Limpiar
+        </button>
       </div>
     </template>
   </VueDatePicker>
