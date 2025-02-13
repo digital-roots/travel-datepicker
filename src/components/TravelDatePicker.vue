@@ -78,6 +78,8 @@ defineExpose({
     :day-names="dayNames"
     :min-date="minDate"
     :max-date="maxDate"
+    :start-date="minDate"
+    :focus-start-date="isMobile"
     :month-change-on-scroll="false"
     :config="config"
     @update:model-value="handleUpdateOnDatePicker"
