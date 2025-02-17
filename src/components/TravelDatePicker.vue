@@ -3,7 +3,25 @@ import VueDatePicker, { type PublicMethods as VueDatePickerMethods } from '@vuep
 import '@vuepic/vue-datepicker/dist/main.css'
 import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, useTemplateRef, computed } from 'vue';
+import { ref, onMounted, useTemplateRef, type PropType } from 'vue';
+import { type UpdateMonthYearArgs, CountType } from './../types/index'
+
+const props = defineProps({
+  countType: {
+    type: String as PropType<CountType>,
+    required: true,
+  },
+  minDate: {
+    type: Date,
+    default: null,
+  },
+  maxDate: {
+    type: Date,
+    default: null,
+  },
+});
+
+const emit = defineEmits(['update:modelValue']);
 
 const dayNames = [
   'Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
@@ -13,22 +31,16 @@ const config = {
   noSwipe: true,
 };
 
-const minDate = new Date();
-minDate.setDate(minDate.getDate() + 2);
-const maxDate = new Date();
-maxDate.setMonth(maxDate.getMonth() + 12);
-
 const date = ref();
 const isMobile = ref(false);
 const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
 const rangeStart = ref<Date | null>(null);
 
-const firstInstanceMonth = ref<number>(minDate.getMonth());
-const firstInstanceYear = ref<number>(minDate.getFullYear());
-const secondInstanceMonth = ref<number>(minDate.getMonth() + 1);
-const secondInstanceYear = ref<number>(minDate.getFullYear());
-
-const emit = defineEmits(['update:modelValue']);
+const firstInstanceDate = props.minDate ?? new Date();
+const firstInstanceMonth = ref<number>(firstInstanceDate.getMonth());
+const firstInstanceYear = ref<number>(firstInstanceDate.getFullYear());
+const secondInstanceMonth = ref<number>(firstInstanceDate.getMonth() + 1);
+const secondInstanceYear = ref<number>(firstInstanceDate.getFullYear());
 
 onMounted(() => {
   isMobile.value = window.innerWidth < 750;
@@ -58,51 +70,35 @@ const handleRangeStart = (startDate: Date) => {
   rangeStart.value = startDate
 }
 
-const handleRangeEnd = (endDate: Date) => {
+const handleRangeEnd = () => {
   rangeStart.value = null
 }
 
-const diffInDays = (date1: Date, date2: Date) => {
-  const diffTime = Math.abs(date2 - date1);
-
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-}
-
 const handleClickOrMouseEnterOnRange = (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
-  const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
-  if (!day || !rangeStart.value) {
-    return
-  }
-
-  const lastDate = new Date(instanceYear, instanceMonth, day);
-  const dayDiff = diffInDays(rangeStart.value, lastDate);
-  console.log(rangeStart.value, lastDate)
-  calendarItem.setAttribute('range-count', (dayDiff + 1).toString() + ' días')
-}
-
-const addCalendarDateEvents = () => {
   setTimeout(() => {
-    const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
-    for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
-      const calendarInstance = calendarInstances[calendarIdx];
-      const calendarInstanceMonth = calendarIdx ? secondInstanceMonth.value : firstInstanceMonth.value;
-      const calendarInstanceYear = calendarIdx ? secondInstanceYear.value : firstInstanceYear.value;
-
-      const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner')
-      for (let index = 0; index < calendarItems.length; index++) {
-        const calendarItem = calendarItems[index];
-        calendarItem.addEventListener('click', () => {
-          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-        })
-        calendarItem.addEventListener('mouseenter', () => {
-          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-        })
-      }
+    const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
+    if (!day || !rangeStart.value) {
+      return
     }
-  }, 100)
+
+    const lastDate = new Date(instanceYear, instanceMonth, day);
+    const dayDiff = diffInDays(rangeStart.value, lastDate);
+    let rangeCount = props.countType === CountType.DAY
+      ? dayDiff + 1
+      : dayDiff;
+    if (! rangeCount) {
+      rangeCount = 1;
+    }
+
+    const message = props.countType === CountType.DAY
+      ? (rangeCount).toString() + ' días'
+      : (rangeCount).toString() + ' noches';
+
+    calendarItem.setAttribute('range-count', message)
+  }, 50)
 }
 
-const handleMonthYear = ({ instance, month, year }) => {
+const handleMonthYear = ({ instance, month, year }: UpdateMonthYearArgs) => {
   if (instance === 0) {
     firstInstanceMonth.value = month
     firstInstanceYear.value = year
@@ -128,6 +124,34 @@ const handleOpenEvent = () => {
   }
 
   addCalendarDateEvents()
+}
+
+const diffInDays = (initialDate: Date, finalDate: Date) => {
+  const diffTime = Math.abs(finalDate.getTime() - initialDate.getTime());
+
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+}
+
+const addCalendarDateEvents = () => {
+  setTimeout(() => {
+    const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
+    for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
+      const calendarInstance = calendarInstances[calendarIdx];
+      const calendarInstanceMonth = calendarIdx ? secondInstanceMonth.value : firstInstanceMonth.value;
+      const calendarInstanceYear = calendarIdx ? secondInstanceYear.value : firstInstanceYear.value;
+
+      const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner')
+      for (let index = 0; index < calendarItems.length; index++) {
+        const calendarItem = calendarItems[index];
+        calendarItem.addEventListener('click', () => {
+          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
+        })
+        calendarItem.addEventListener('mouseenter', () => {
+          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
+        })
+      }
+    }
+  }, 100)
 }
 
 const open = () => {

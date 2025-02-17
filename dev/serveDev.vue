@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
 import TravelDatepicker from '../src/components/TravelDatePicker.vue';
+import { CountType, PublicMethods } from '../src/types';
 
-const datePicker = useTemplateRef('travel-datepicker');
+const datePicker = useTemplateRef<PublicMethods>('travel-datepicker');
 
 const startD = ref('');
 const endD = ref('');
+
+const minDate = new Date();
+minDate.setDate(minDate.getDate() + 2);
+const maxDate = new Date();
+maxDate.setMonth(maxDate.getMonth() + 12);
 
 const onDateInputClick = () => {
   if (datePicker.value) {
@@ -29,7 +35,7 @@ const handleUpdateOnDatePicker = (dateValue: Date[] | null) => {
     endD.value = fechaFD;
 }
 
-const formatDateString = (dateObj) => {
+const formatDateString = (dateObj: Date) => {
   let day = dateObj.getDate().toString();
   if (day.length < 2) {
     day = `0${day}`;
@@ -65,6 +71,7 @@ const formatDateString = (dateObj) => {
         >
         <travel-datepicker
           ref="travel-datepicker"
+          :count-type="CountType.NIGHT"
           @update:model-value="handleUpdateOnDatePicker"
         />
       </div>
