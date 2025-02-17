@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VueDatePicker, { type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import './../assets/main.css'
+import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
 import { ref, onMounted, useTemplateRef } from 'vue';
 
@@ -44,7 +44,7 @@ const handleClickOnBackBtn = () => {
 
 const handleClickOnClearBtn = () => {
   if (datePicker.value) {
-    datePicker.value.updateInternalModelValue(null);
+    datePicker.value.clearValue();
   }
 }
 
