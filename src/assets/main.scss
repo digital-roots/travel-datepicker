@@ -3,12 +3,15 @@
 /* Override Vue Datepicker styles */
 * {
   --dp-cell-border-radius: 0;
-  --dp-cell-size: 2.8rem;
+  --dp-cell-size: 44px;
   --dp-primary-color: #{variables.$secondary-color};
   --dp-text-color: #{variables.$text-color};
   --dp-hover-text-color: #{variables.$text-color};
   --dp-range-between-dates-background-color: #{variables.$secondary-color};
   --dp-row-margin: 0;
+  --dp-icon-color: #{variables.$secondary-color};
+  --dp-font-family: 'Source Sans Pro',sans-serif,verdana,arial;
+
   box-sizing: border-box;
 }
 
@@ -20,25 +23,32 @@
   .dp__menu {
     border: none;
     box-shadow: 0 15px 30px 10px #00000014;
-  
+
     .dp__arrow_top {
       display: none;
     }
-  
-    .dp--arrow-btn-nav[aria-disabled="true"] {
-      display: none;
-    }
-  
-    .dp__menu_inner {
-      padding: 0;
-  
-      .dp__month_year_wrap.dp__month_year_wrap {
-        justify-content: center;
+
+    .dp--arrow-btn-nav {
+      .dp__inner_nav {
+        background-color: transparent;
+        color: var(--dp-primary-color);
+
+        &:hover {
+          color: var(--dp-primary-color);
+        }
+
+        &.dp__inner_nav_disabled {
+          opacity: 0.2;
+        }
       }
-  
+    }
+
+    .dp__menu_inner {
+      padding: 0 1.75rem;
+
       .dp__month_year_select {
-        font-size: 18px;
-        font-weight: bold;
+        font-size: 16px;
+        font-weight: 700;
         pointer-events: none;
         width: auto;
       
@@ -56,22 +66,48 @@
         }
       }
 
-      & .dp__instance_calendar {
+      .dp__instance_calendar {
         border-left: 1px solid #ddd;
         margin-left: 1rem;
         padding: 0.5rem 0.5rem 1rem;
 
+        .dp__month_year_wrap .dp__month_year_wrap {
+          justify-content: center;
+        }
+
         &:first-child {
           border-left: none;
           margin-left: 0;
+
+          .dp__month_year_wrap {
+            transform: translateX(-28px);
+
+            .dp__month_year_wrap {
+              transform: none;
+            }
+          }
+        }
+
+        &:last-child {
+          // stylelint-disable no-descending-specificity
+          .dp__month_year_wrap {
+            transform: translateX(28px);
+
+            .dp__month_year_wrap {
+              transform: none;
+            }
+          }
+          // stylelint-enable no-descending-specificity
         }
 
         .dp__calendar_header {
-          height: 32px;
+          height: 30px;
 
           .dp__calendar_header_item {
-            height: 32px;
-            padding: 0;
+            font-size: 12px;
+            font-weight: 400;
+            height: 30px;
+            padding-top: 5px;
           }
         }
 
@@ -80,9 +116,9 @@
         }
 
         .dp__cell_disabled {
-          background-color: var(--dp-hover-color);
-          border-color: var(--dp-hover-color);
-          color: var(--dp-hover-icon-color);
+          background-color: #f5f7f8;
+          border-color: #f5f7f8;
+          color: #d8d8d8;
           text-decoration: line-through;
         }
 
@@ -90,6 +126,25 @@
           background-color: var(--dp-primary-color) !important;
           border-color: var(--dp-primary-color);
           color: white;
+        }
+
+        .dp__cell_inner {
+          font-size: 12px;
+          font-weight: 400;
+
+          &:hover {
+            background-color: var(--dp-primary-color);
+            color: white;
+          }
+
+          &.dp__today {
+            border-color: var(--dp-primary-color);
+            border-width: 2px;
+          }
+        }
+
+        .dp__range_start, .dp__range_end {
+          font-weight: bolder;
         }
 
         .dp__date_hover_end, .dp__range_start:hover, .dp__date_hover_start:hover {
@@ -109,25 +164,20 @@
             top: -20px;
             white-space:nowrap;
             width: 56px;
-            /*  z-index: 500;*/
           }
+
           &::after {
-            border-color: transparent transparent #2d3047 transparent;
+            border-color: transparent transparent #2d3047;
             border-style: solid;
-            border-width: 0 5px 5px 5px;
+            border-width: 0 5px 5px;
             content: '';
             display: block;
-            height: 0px;
+            height: 0;
             position: absolute;
-            transform: rotate(180deg);
             top: 0;
-            width: 0px;
-            /* z-index: 500; */
+            transform: rotate(180deg);
+            width: 0;
           }
-        }
-
-        .dp__range_start, .dp__range_end {
-          font-weight: bolder;
         }
       }
     }
@@ -163,6 +213,7 @@
     &.back-btn {
       background: none;
       border: none;
+      color: #919191;
     }
     
     &.clear-btn {
@@ -195,12 +246,13 @@
   
       .dp__menu {
         height: 100dvh;
-  
+
         .dp__instance_calendar {
           .dp__menu_inner {
             max-height: calc(100dvh - 6rem);
             max-width: 100vw;
             overflow: hidden scroll;
+            padding: 0;
   
             .dp__instance_calendar {
               border-left: none;
@@ -208,6 +260,10 @@
               padding-left: 1.5rem;
               padding-right: 1.5rem;
             }
+          }
+
+          .dp__month_year_wrap {
+            transform: none !important;
           }
         }
   

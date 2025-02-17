@@ -14,9 +14,9 @@ const startD = ref('');
 const endD = ref('');
 
 const countType = ref<CountType>(CountType.DAY);
-const enableMinDate = ref<Boolean>(false);
+const enableMinDate = ref<boolean>(false);
 const minDate = ref<Date|string>(defaultMinDate);
-const enableMaxDate = ref<Boolean>(false);
+const enableMaxDate = ref<boolean>(false);
 const maxDate = ref<Date|string>(defaultMaxDate);
 
 const formattedMinDate = computed(() => {
@@ -121,34 +121,59 @@ const formatDateString = (dateObj: Date) => {
         <div class="form">
           <div class="prop-input">
             <label for="countType">countType</label>
-            <select v-model="countType" name="countType">
-              <option :value="CountType.DAY">Days</option>
-              <option :value="CountType.NIGHT">Nights</option>
+            <select
+              v-model="countType"
+              name="countType"
+            >
+              <option :value="CountType.DAY">
+                Days
+              </option>
+              <option :value="CountType.NIGHT">
+                Nights
+              </option>
             </select>
           </div>
           <div class="prop-input">
             <label for="enableMinDate">Enable minDate</label>
-            <input v-model="enableMinDate" name="enableMinDate" type="checkbox">
+            <input
+              v-model="enableMinDate"
+              name="enableMinDate"
+              type="checkbox"
+            >
           </div>
           <div :class="{'prop-input': true, 'disable': !enableMinDate }">
             <label for="minDate">minDate</label>
-            <input v-model="minDate" name="minDate" type="date" :disabled="!enableMinDate">
+            <input
+              v-model="minDate"
+              name="minDate"
+              type="date"
+              :disabled="!enableMinDate"
+            >
           </div>
           <div class="prop-input">
             <label for="enableMaxDate">Enable maxDate</label>
-            <input v-model="enableMaxDate" name="enableMaxDate" type="checkbox">
+            <input
+              v-model="enableMaxDate"
+              name="enableMaxDate"
+              type="checkbox"
+            >
           </div>
           <div :class="{'prop-input': true, 'disable': !enableMaxDate }">
             <label for="maxDate">maxDate</label>
-            <input v-model="maxDate" name="maxDate" type="date" :disabled="!enableMaxDate">
+            <input
+              v-model="maxDate"
+              name="maxDate"
+              type="date"
+              :disabled="!enableMaxDate"
+            >
           </div>
         </div>
         <div class="data">
           <code>
             {<br>
-              "countType" : "{{ countType }}",<br>
-              "minDate" : "{{ formattedMinDate }}",<br>
-              "maxDate" : "{{ formattedMaxDate }}"<br>
+            "countType" : "{{ countType }}",<br>
+            "minDate" : "{{ formattedMinDate }}",<br>
+            "maxDate" : "{{ formattedMaxDate }}"<br>
             }
           </code>
         </div>

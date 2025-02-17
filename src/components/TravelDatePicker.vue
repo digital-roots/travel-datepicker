@@ -133,6 +133,10 @@ const diffInDays = (initialDate: Date, finalDate: Date) => {
 }
 
 const addCalendarDateEvents = () => {
+  if (isMobile.value) {
+    return;
+  }
+
   setTimeout(() => {
     const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
     for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {

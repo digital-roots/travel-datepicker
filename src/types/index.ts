@@ -10,5 +10,5 @@ export enum CountType {
 }
 
 export interface PublicMethods {
-  open: Function,
+  open: () => void,
 }
