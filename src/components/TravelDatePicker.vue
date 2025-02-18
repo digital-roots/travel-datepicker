@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import VueDatePicker, { type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
 import { ref, onMounted, useTemplateRef, type PropType } from 'vue';
 import { type UpdateMonthYearArgs, CountType } from './../types/index'
 import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
 
 const props = defineProps({
   countType: {
@@ -14,11 +15,19 @@ const props = defineProps({
   },
   minDate: {
     type: Date,
-    default: null,
+    default: undefined,
   },
   maxDate: {
     type: Date,
-    default: null,
+    default: undefined,
+  },
+  minRange: {
+    type: Number,
+    default: undefined,
+  },
+  maxRange: {
+    type: Number,
+    default: undefined,
   },
 });
 
@@ -57,6 +66,29 @@ onMounted(() => {
   window.addEventListener("resize", () => {
     isMobile.value = window.innerWidth < 750;
   });
+})
+
+const rangeConfig = computed<RangeConfig>(() => {
+  if (props.minRange && props.maxRange) {
+    return {
+      minRange: props.minRange,
+      maxRange: props.maxRange,
+    }
+  }
+
+  if (props.minRange) {
+    return {
+      minRange: props.minRange,
+    }
+  }
+
+  if (props.maxRange) {
+    return {
+      maxRange: props.maxRange,
+    }
+  }
+
+  return {};
 })
 
 const handleUpdateOnDatePicker = (modelValue: Date[] | null) => {
@@ -190,7 +222,7 @@ defineExpose({
     week-start="0"
     :cancel-text="t('buttons.cancel')"
     :select-text="t('buttons.ready')"
-    range
+    :range="rangeConfig"
     :auto-apply="!isMobile"
     :enable-time-picker="false"
     :multi-calendars="isMobile ? 12 : 2"
