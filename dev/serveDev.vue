@@ -19,6 +19,9 @@ const minDate = ref<Date|string>(defaultMinDate);
 const enableMaxDate = ref<boolean>(false);
 const maxDate = ref<Date|string>(defaultMaxDate);
 
+const minRange = ref<number>();
+const maxRange = ref<number>();
+
 const formattedMinDate = computed(() => {
   if (!enableMinDate.value || !minDate.value) {
     return undefined;
@@ -112,6 +115,8 @@ const formatDateString = (dateObj: Date) => {
           :count-type="countType"
           :min-date="formattedMinDate"
           :max-date="formattedMaxDate"
+          :min-range="minRange"
+          :max-range="maxRange"
           @update:model-value="handleUpdateOnDatePicker"
         />
       </div>
@@ -167,6 +172,22 @@ const formatDateString = (dateObj: Date) => {
               :disabled="!enableMaxDate"
             >
           </div>
+          <div class="prop-input">
+            <label for="minRange">minRange</label>
+            <input
+              v-model="minRange"
+              name="minRange"
+              type="number"
+            >
+          </div>
+          <div class="prop-input">
+            <label for="maxDate">maxRange</label>
+            <input
+              v-model="maxRange"
+              name="maxRange"
+              type="number"
+            >
+          </div>
         </div>
         <div class="data">
           <code>
@@ -174,6 +195,8 @@ const formatDateString = (dateObj: Date) => {
             "countType" : "{{ countType }}",<br>
             "minDate" : "{{ formattedMinDate }}",<br>
             "maxDate" : "{{ formattedMaxDate }}"<br>
+            "minRange" : "{{ minRange }}"<br>
+            "maxRange" : "{{ maxRange }}"<br>
             }
           </code>
         </div>
