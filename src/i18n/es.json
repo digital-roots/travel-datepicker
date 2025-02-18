@@ -1,0 +1,20 @@
+{
+    "dayNameAbbreviations": {
+        "sunday": "Dom",
+        "monday": "Lun",
+        "tuesday": "Mar",
+        "wednesday": "Mie",
+        "thursday": "Jue",
+        "friday": "Vie",
+        "saturday": "Sáb"
+    },
+    "count": {
+        "day": "{count} día | {count} días",
+        "night": "{count} noche | {count} noches"
+    },
+    "buttons": {
+        "clean": "Limpiar",
+        "cancel": "Cancelar",
+        "ready": "Listo"
+    }
+}
