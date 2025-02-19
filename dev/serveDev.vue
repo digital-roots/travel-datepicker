@@ -195,8 +195,8 @@ const formatDateString = (dateObj: Date) => {
             "countType" : "{{ countType }}",<br>
             "minDate" : "{{ formattedMinDate }}",<br>
             "maxDate" : "{{ formattedMaxDate }}"<br>
-            "minRange" : "{{ minRange }}"<br>
-            "maxRange" : "{{ maxRange }}"<br>
+            "minRangeSelection" : "{{ minRange }}"<br>
+            "maxRangeSelection" : "{{ maxRange }}"<br>
             }
           </code>
         </div>
