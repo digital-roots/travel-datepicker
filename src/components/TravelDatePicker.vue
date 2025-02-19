@@ -3,7 +3,7 @@ import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMet
 import '@vuepic/vue-datepicker/dist/main.css'
 import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, useTemplateRef, type PropType } from 'vue';
+import { ref, onMounted, useTemplateRef, type PropType, nextTick } from 'vue';
 import { type UpdateMonthYearArgs, CountType } from './../types/index'
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
@@ -21,11 +21,11 @@ const props = defineProps({
     type: Date,
     default: undefined,
   },
-  minRange: {
+  minRangeSelection: {
     type: Number,
     default: undefined,
   },
-  maxRange: {
+  maxRangeSelection: {
     type: Number,
     default: undefined,
   },
@@ -54,11 +54,11 @@ const isMobile = ref(false);
 const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
 const rangeStart = ref<Date | null>(null);
 
-const firstInstanceDate = props.minDate ?? new Date();
-const firstInstanceMonth = ref<number>(firstInstanceDate.getMonth());
-const firstInstanceYear = ref<number>(firstInstanceDate.getFullYear());
-const secondInstanceMonth = ref<number>(firstInstanceDate.getMonth() + 1);
-const secondInstanceYear = ref<number>(firstInstanceDate.getFullYear());
+const initialDate = props.minDate ?? new Date();
+const leftDesktopDayPickerMonth = ref<number>(initialDate.getMonth());
+const leftDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
+const rightDesktopDayPickerMonth = ref<number>(initialDate.getMonth() + 1);
+const rightDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 
 onMounted(() => {
   isMobile.value = window.innerWidth < 750;
@@ -69,22 +69,22 @@ onMounted(() => {
 })
 
 const rangeConfig = computed<RangeConfig>(() => {
-  if (props.minRange && props.maxRange) {
+  if (props.minRangeSelection && props.maxRangeSelection) {
     return {
-      minRange: props.minRange,
-      maxRange: props.maxRange,
+      minRange: props.minRangeSelection,
+      maxRange: props.maxRangeSelection,
     }
   }
 
-  if (props.minRange) {
+  if (props.minRangeSelection) {
     return {
-      minRange: props.minRange,
+      minRange: props.minRangeSelection,
     }
   }
 
-  if (props.maxRange) {
+  if (props.maxRangeSelection) {
     return {
-      maxRange: props.maxRange,
+      maxRange: props.maxRangeSelection,
     }
   }
 
@@ -107,96 +107,118 @@ const handleClickOnClearBtn = () => {
   }
 }
 
-const handleRangeStart = (startDate: Date) => {
-  rangeStart.value = startDate
+const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
+  const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
+  if (!day) {
+    return
+  }
+
+  const selectedDate = new Date(instanceYear, instanceMonth, day);
+  if (!rangeStart.value) {
+    rangeStart.value = selectedDate;
+  }
+
+  setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
 }
 
-const handleRangeEnd = () => {
-  rangeStart.value = null
+const handleMouseEnterOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
+  const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
+
+  if (!day) {
+    return
+  }
+
+  const selectedDate = new Date(instanceYear, instanceMonth, day);
+
+  setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
 }
 
-const handleClickOrMouseEnterOnRange = (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
-  setTimeout(() => {
-    const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
-    if (!day || !rangeStart.value) {
-      return
-    }
+const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selectedDate: Date) => {
+  if (!rangeStart.value) {
+    return;
+  }
 
-    const lastDate = new Date(instanceYear, instanceMonth, day);
-    const dayDiff = diffInDays(rangeStart.value, lastDate);
-    let rangeCount = props.countType === CountType.DAY
-      ? dayDiff + 1
-      : dayDiff;
-    if (! rangeCount) {
-      rangeCount = 1;
-    }
+  const dayDiff = getDiffInDays(rangeStart.value, selectedDate);
+  let rangeCount = props.countType === CountType.DAY
+    ? dayDiff + 1
+    : dayDiff;
+  if (! rangeCount) {
+    rangeCount = 1;
+  }
 
     const message = props.countType === CountType.DAY
       ? t('count.day', rangeCount)
       : t('count.night', rangeCount);
 
-    calendarItem.setAttribute('range-count', message)
-  }, 50)
+  calendarItem.setAttribute('range-count', message)
 }
 
-const handleMonthYear = ({ instance, month, year }: UpdateMonthYearArgs) => {
+const handleMonthYearUpdate = ({ instance, month, year }: UpdateMonthYearArgs) => {
   if (instance === 0) {
-    firstInstanceMonth.value = month
-    firstInstanceYear.value = year
+    leftDesktopDayPickerMonth.value = month
+    leftDesktopDayPickerYear.value = year
 
-    secondInstanceMonth.value = month + 1
+    rightDesktopDayPickerMonth.value = month + 1
   } else {
-    firstInstanceMonth.value = month - 1
+    leftDesktopDayPickerMonth.value = month - 1
 
-    secondInstanceMonth.value = month
-    secondInstanceYear.value = year
+    rightDesktopDayPickerMonth.value = month
+    rightDesktopDayPickerYear.value = year
   }
 
   addCalendarDateEvents();
 }
 
-const handleOpenEvent = () => {
+const handleOpen = () => {
   if (date.value && date.value.length === 2) {
-    firstInstanceMonth.value = date.value[1].getMonth()
-    firstInstanceYear.value = date.value[1].getFullYear()
+    leftDesktopDayPickerMonth.value = date.value[1].getMonth()
+    leftDesktopDayPickerYear.value = date.value[1].getFullYear()
 
-    secondInstanceMonth.value = date.value[1].getMonth() + 1
-    secondInstanceYear.value = date.value[1].getFullYear()
+    rightDesktopDayPickerMonth.value = date.value[1].getMonth() + 1
+    rightDesktopDayPickerYear.value = date.value[1].getFullYear()
   }
 
   addCalendarDateEvents()
 }
 
-const diffInDays = (initialDate: Date, finalDate: Date) => {
+const handleClose = () => {
+  rangeStart.value = null;
+}
+
+const getDiffInDays = (initialDate: Date, finalDate: Date) => {
   const diffTime = Math.abs(finalDate.getTime() - initialDate.getTime());
 
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 }
 
-const addCalendarDateEvents = () => {
+const addCalendarDateEvents = async () => {
   if (isMobile.value) {
     return;
   }
 
-  setTimeout(() => {
-    const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
-    for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
-      const calendarInstance = calendarInstances[calendarIdx];
-      const calendarInstanceMonth = calendarIdx ? secondInstanceMonth.value : firstInstanceMonth.value;
-      const calendarInstanceYear = calendarIdx ? secondInstanceYear.value : firstInstanceYear.value;
+  await nextTick();
 
-      const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner')
-      for (let index = 0; index < calendarItems.length; index++) {
-        const calendarItem = calendarItems[index];
-        calendarItem.addEventListener('click', () => {
-          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-        })
-        calendarItem.addEventListener('mouseenter', () => {
-          handleClickOrMouseEnterOnRange(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-        })
-      }
+  const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
+  for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
+    const calendarInstance = calendarInstances[calendarIdx];
+    const calendarInstanceMonth = calendarIdx ? rightDesktopDayPickerMonth.value : leftDesktopDayPickerMonth.value;
+    const calendarInstanceYear = calendarIdx ? rightDesktopDayPickerYear.value : leftDesktopDayPickerYear.value;
+
+    await nextTick();
+
+    const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner')
+    for (let index = 0; index < calendarItems.length; index++) {
+      await nextTick();
+      const calendarItem = calendarItems[index];
+
+      calendarItem.addEventListener('click', () => {
+        handleClickOnCalendarItem(calendarItem, calendarInstanceMonth, calendarInstanceYear);
+      })
+      calendarItem.addEventListener('mouseenter', () => {
+        handleMouseEnterOnCalendarItem(calendarItem, calendarInstanceMonth, calendarInstanceYear);
+      })
     }
-  }, 100)
+  }
 }
 
 const open = () => {
@@ -234,10 +256,9 @@ defineExpose({
     :month-change-on-scroll="false"
     :config="config"
     @update:model-value="handleUpdateOnDatePicker"
-    @range-start="handleRangeStart"
-    @range-end="handleRangeEnd"
-    @open="handleOpenEvent"
-    @update-month-year="handleMonthYear"
+    @open="handleOpen"
+    @closed="handleClose"
+    @update-month-year="handleMonthYearUpdate"
   >
     <template #menu-header>
       <div class="datepicker-header">
