@@ -20,11 +20,11 @@ const props = defineProps({
     type: Date,
     default: undefined,
   },
-  minRange: {
+  minRangeSelection: {
     type: Number,
     default: undefined,
   },
-  maxRange: {
+  maxRangeSelection: {
     type: Number,
     default: undefined,
   },
@@ -60,22 +60,22 @@ onMounted(() => {
 })
 
 const rangeConfig = computed<RangeConfig>(() => {
-  if (props.minRange && props.maxRange) {
+  if (props.minRangeSelection && props.maxRangeSelection) {
     return {
-      minRange: props.minRange,
-      maxRange: props.maxRange,
+      minRange: props.minRangeSelection,
+      maxRange: props.maxRangeSelection,
     }
   }
 
-  if (props.minRange) {
+  if (props.minRangeSelection) {
     return {
-      minRange: props.minRange,
+      minRange: props.minRangeSelection,
     }
   }
 
-  if (props.maxRange) {
+  if (props.maxRangeSelection) {
     return {
-      maxRange: props.maxRange,
+      maxRange: props.maxRangeSelection,
     }
   }
 

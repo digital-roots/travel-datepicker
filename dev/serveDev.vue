@@ -115,8 +115,8 @@ const formatDateString = (dateObj: Date) => {
           :count-type="countType"
           :min-date="formattedMinDate"
           :max-date="formattedMaxDate"
-          :min-range="minRange"
-          :max-range="maxRange"
+          :min-range-selection="minRange"
+          :max-range-selection="maxRange"
           @update:model-value="handleUpdateOnDatePicker"
         />
       </div>
@@ -173,7 +173,7 @@ const formatDateString = (dateObj: Date) => {
             >
           </div>
           <div class="prop-input">
-            <label for="minRange">minRange</label>
+            <label for="minRange">minRangeSelection</label>
             <input
               v-model="minRange"
               name="minRange"
@@ -181,7 +181,7 @@ const formatDateString = (dateObj: Date) => {
             >
           </div>
           <div class="prop-input">
-            <label for="maxDate">maxRange</label>
+            <label for="maxDate">maxRangeSelection</label>
             <input
               v-model="maxRange"
               name="maxRange"
