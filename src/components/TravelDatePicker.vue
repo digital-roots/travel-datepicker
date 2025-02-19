@@ -106,6 +106,13 @@ const handleRangeEnd = () => {
   rangeStart.value = null
 }
 
+/**
+ * Set to the given calendarItem a range-count attribute based in the day or night count
+ * between the rangeStart date and the date selected or hovered.
+ * @param calendarItem
+ * @param instanceMonth
+ * @param instanceYear
+ */
 const handleClickOrMouseEnterOnRange = (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
   setTimeout(() => {
     const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
@@ -130,7 +137,7 @@ const handleClickOrMouseEnterOnRange = (calendarItem: Element, instanceMonth: nu
   }, 50)
 }
 
-const handleMonthYear = ({ instance, month, year }: UpdateMonthYearArgs) => {
+const handleMonthYearUpdate = ({ instance, month, year }: UpdateMonthYearArgs) => {
   if (instance === 0) {
     firstInstanceMonth.value = month
     firstInstanceYear.value = year
@@ -146,7 +153,7 @@ const handleMonthYear = ({ instance, month, year }: UpdateMonthYearArgs) => {
   addCalendarDateEvents();
 }
 
-const handleOpenEvent = () => {
+const handleOpen = () => {
   if (date.value && date.value.length === 2) {
     firstInstanceMonth.value = date.value[1].getMonth()
     firstInstanceYear.value = date.value[1].getFullYear()
@@ -227,8 +234,8 @@ defineExpose({
     @update:model-value="handleUpdateOnDatePicker"
     @range-start="handleRangeStart"
     @range-end="handleRangeEnd"
-    @open="handleOpenEvent"
-    @update-month-year="handleMonthYear"
+    @open="handleOpen"
+    @update-month-year="handleMonthYearUpdate"
   >
     <template #menu-header>
       <div class="datepicker-header">
