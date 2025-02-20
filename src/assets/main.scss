@@ -263,10 +263,17 @@
             }
           }
 
+          .dp__date_hover_end, .dp__range_start:hover, .dp__date_hover_start:hover {
+            &::before, &::after {
+              display: none;
+            }
+          }
+
           .dp__month_year_wrap {
             transform: none !important;
           }
         }
+
   
         .dp--arrow-btn-nav {
           display: none;
