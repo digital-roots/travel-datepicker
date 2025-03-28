@@ -5,6 +5,7 @@ import './../assets/main.scss'
 import ArrowLeft from './icons/ArrowLeft.vue';
 import { ref, onMounted, useTemplateRef, type PropType, nextTick } from 'vue';
 import { type UpdateMonthYearArgs, CountType } from './../types/index'
+import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -32,8 +33,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+const {t} = useI18n();
+
 const dayNames = [
-  'Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
+  t('dayNameAbbreviations.sunday'),
+  t('dayNameAbbreviations.monday'),
+  t('dayNameAbbreviations.tuesday'),
+  t('dayNameAbbreviations.wednesday'),
+  t('dayNameAbbreviations.thursday'),
+  t('dayNameAbbreviations.friday'),
+  t('dayNameAbbreviations.saturday'),
 ];
 const config = {
   mobileBreakpoint: 750,
@@ -137,9 +146,9 @@ const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selec
     rangeCount = 1;
   }
 
-  const message = props.countType === CountType.DAY
-    ? (rangeCount).toString() + ' días'
-    : (rangeCount).toString() + ' noches';
+    const message = props.countType === CountType.DAY
+      ? t('count.day', rangeCount)
+      : t('count.night', rangeCount);
 
   calendarItem.setAttribute('range-count', message)
 }
@@ -233,8 +242,8 @@ defineExpose({
     hide-offset-dates
     prevent-min-max-navigation
     week-start="0"
-    cancel-text="Cancelar"
-    select-text="Listo"
+    :cancel-text="t('buttons.cancel')"
+    :select-text="t('buttons.ready')"
     :range="rangeConfig"
     :auto-apply="!isMobile"
     :enable-time-picker="false"
@@ -263,7 +272,7 @@ defineExpose({
           class="datepicker-btn clear-btn"
           @click="handleClickOnClearBtn"
         >
-          Limpiar
+          {{ t('buttons.clean') }}
         </button>
       </div>
     </template>
