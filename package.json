@@ -1,20 +1,27 @@
 {
   "name": "travel-datepicker",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build",
+    "build:lib": "vite build",
+    "build:es": "cross-env NODE_ENV=production vite build --mode production",
+    "build:browser": "cross-env NODE_ENV=production vite -f iife build --mode production",
+    "build:css": "cross-env NODE_ENV=production node_modules/.bin/sass src/assets/main.scss dist/main.css --style compressed",
     "type-check": "vue-tsc --build",
     "eslint": "eslint .",
-    "eslint-fix": "eslint . --fix"
+    "eslint-fix": "eslint . --fix",
+    "stylelint": "stylelint \"**/*.scss\"",
+    "stylelint-fix": "stylelint \"**/*.scss\" --fix"
   },
   "dependencies": {
     "@vuepic/vue-datepicker": "^11.0.1",
-    "vue": "^3.5.13"
+    "minimist": "^1.2.8",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.1.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
@@ -26,9 +33,16 @@
     "eslint-plugin-vue": "^9.32.0",
     "jiti": "^2.4.2",
     "npm-run-all2": "^7.0.2",
+    "postcss-scss": "^4.0.9",
+    "sass": "^1.84.0",
+    "sass-loader": "^16.0.4",
+    "stylelint": "^16.14.1",
+    "stylelint-config-recommended-scss": "^14.1.0",
+    "stylelint-config-recommended-vue": "^1.6.0",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-order": "^6.0.4",
     "typescript": "~5.7.3",
-    "vite": "^6.0.11",
-    "vite-plugin-vue-devtools": "^7.7.1",
+    "vite": "^6.1.0",
     "vue-tsc": "^2.2.0"
   }
 }
