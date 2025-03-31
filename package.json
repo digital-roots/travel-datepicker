@@ -5,12 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build:lib {@}\" --",
     "preview": "vite preview",
     "build:lib": "vite build",
-    "build:es": "cross-env NODE_ENV=production vite build --mode production",
-    "build:browser": "cross-env NODE_ENV=production vite -f iife build --mode production",
-    "build:css": "cross-env NODE_ENV=production node_modules/.bin/sass src/assets/main.scss dist/main.css --style compressed",
     "type-check": "vue-tsc --build",
     "eslint": "eslint .",
     "eslint-fix": "eslint . --fix",
