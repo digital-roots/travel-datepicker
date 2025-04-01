@@ -1,7 +1,7 @@
 export interface UpdateMonthYearArgs {
-  instance: number,
-  month: number,
-  year: number,
+  instance: number;
+  month: number;
+  year: number;
 }
 
 export enum CountType {
@@ -10,5 +10,5 @@ export enum CountType {
 }
 
 export interface PublicMethods {
-  open: () => void,
+  open: () => void;
 }
