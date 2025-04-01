@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue';
+import {
+  computed,
+  ref,
+  useTemplateRef,
+} from 'vue';
 import TravelDatepicker from '../src/components/TravelDatePicker.vue';
-import { CountType, PublicMethods } from '../src/types';
+import { CountType, PublicMethods } from '@/types';
 
 const defaultMinDate = new Date();
 defaultMinDate.setDate(defaultMinDate.getDate() + 2);
@@ -15,9 +19,9 @@ const endD = ref('');
 
 const countType = ref<CountType>(CountType.DAY);
 const enableMinDate = ref<boolean>(false);
-const minDate = ref<Date|string>(defaultMinDate);
+const minDate = ref<Date | string>(defaultMinDate);
 const enableMaxDate = ref<boolean>(false);
-const maxDate = ref<Date|string>(defaultMaxDate);
+const maxDate = ref<Date | string>(defaultMaxDate);
 
 const minRange = ref<number>();
 const maxRange = ref<number>();
@@ -27,38 +31,36 @@ const formattedMinDate = computed(() => {
     return undefined;
   }
 
-  if (typeof(minDate.value) !== 'string') {
+  if (typeof (minDate.value) !== 'string') {
     return defaultMinDate;
   }
 
   return getFormattedDateForComp(minDate.value);
-
-})
+});
 
 const formattedMaxDate = computed(() => {
   if (!enableMaxDate.value || !maxDate.value) {
     return undefined;
   }
 
-  if (typeof(maxDate.value) !== 'string') {
+  if (typeof (maxDate.value) !== 'string') {
     return defaultMaxDate;
   }
 
   return getFormattedDateForComp(maxDate.value);
-
-})
+});
 
 const getFormattedDateForComp = (dateText: string) => {
   const [year, month, day] = dateText.split('-');
 
   return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-}
+};
 
 const onDateInputClick = () => {
   if (datePicker.value) {
     datePicker.value.open();
   }
-}
+};
 
 const handleUpdateOnDatePicker = (dateValue: Date[] | null) => {
   if (! dateValue || ! dateValue.length) {
@@ -88,13 +90,15 @@ const formatDateString = (dateObj: Date) => {
   }
 
   return `${day}-${month}-${dateObj.getFullYear()}`;
-}
+};
 </script>
 
 <template>
   <main>
     <div class="dev-example">
-      <h1>Travel DatePicker</h1>
+      <h1>
+        Travel DatePicker
+      </h1>
       <div>
         <input
           id=""
@@ -102,15 +106,15 @@ const formatDateString = (dateObj: Date) => {
           type="text"
           name=""
           @click="onDateInputClick"
-        >
+        />
         <input
           id=""
           v-model="endD"
           type="text"
           name=""
           @click="onDateInputClick"
-        >
-        <travel-datepicker
+        />
+        <TravelDatepicker
           ref="travel-datepicker"
           :count-type="countType"
           :min-date="formattedMinDate"
@@ -121,11 +125,15 @@ const formatDateString = (dateObj: Date) => {
         />
       </div>
 
-      <h2>Props</h2>
+      <h2>
+        Props
+      </h2>
       <div class="props">
         <div class="form">
           <div class="prop-input">
-            <label for="countType">countType</label>
+            <label for="countType">
+              countType
+            </label>
             <select
               v-model="countType"
               name="countType"
@@ -139,64 +147,76 @@ const formatDateString = (dateObj: Date) => {
             </select>
           </div>
           <div class="prop-input">
-            <label for="enableMinDate">Enable minDate</label>
+            <label for="enableMinDate">
+              Enable minDate
+            </label>
             <input
               v-model="enableMinDate"
               name="enableMinDate"
               type="checkbox"
-            >
+            />
           </div>
           <div :class="{'prop-input': true, 'disable': !enableMinDate }">
-            <label for="minDate">minDate</label>
+            <label for="minDate">
+              minDate
+            </label>
             <input
               v-model="minDate"
               name="minDate"
               type="date"
               :disabled="!enableMinDate"
-            >
+            />
           </div>
           <div class="prop-input">
-            <label for="enableMaxDate">Enable maxDate</label>
+            <label for="enableMaxDate">
+              Enable maxDate
+            </label>
             <input
               v-model="enableMaxDate"
               name="enableMaxDate"
               type="checkbox"
-            >
+            />
           </div>
           <div :class="{'prop-input': true, 'disable': !enableMaxDate }">
-            <label for="maxDate">maxDate</label>
+            <label for="maxDate">
+              maxDate
+            </label>
             <input
               v-model="maxDate"
               name="maxDate"
               type="date"
               :disabled="!enableMaxDate"
-            >
+            />
           </div>
           <div class="prop-input">
-            <label for="minRange">minRangeSelection</label>
+            <label for="minRange">
+              minRangeSelection
+            </label>
             <input
               v-model="minRange"
               name="minRange"
               type="number"
-            >
+            />
           </div>
           <div class="prop-input">
-            <label for="maxDate">maxRangeSelection</label>
+            <label for="maxDate">
+              maxRangeSelection
+            </label>
             <input
               v-model="maxRange"
               name="maxRange"
               type="number"
-            >
+            />
           </div>
         </div>
         <div class="data">
           <code>
-            {<br>
-            "countType" : "{{ countType }}",<br>
-            "minDate" : "{{ formattedMinDate }}",<br>
-            "maxDate" : "{{ formattedMaxDate }}"<br>
-            "minRangeSelection" : "{{ minRange }}"<br>
-            "maxRangeSelection" : "{{ maxRange }}"<br>
+            {<br />
+            "countType" : "{{ countType }}",<br />
+            "minDate" : "{{ formattedMinDate }}",<br />
+            "maxDate" : "{{ formattedMaxDate }}"<br />
+            "minRangeSelection" : "{{ minRange }}"<br />
+            "maxRangeSelection" : "{{ maxRange }}"<br />
             }
           </code>
         </div>

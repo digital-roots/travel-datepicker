@@ -2,11 +2,17 @@
 import { computed } from 'vue';
 import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
 import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, useTemplateRef, nextTick, type PropType } from 'vue';
-import { type UpdateMonthYearArgs, CountType } from '@/types'
+import {
+  ref,
+  onMounted,
+  useTemplateRef,
+  nextTick,
+  type PropType,
+} from 'vue';
+import { type UpdateMonthYearArgs, CountType } from '@/types';
 import useI18n from '../composables/i18n';
-import '@vuepic/vue-datepicker/dist/main.css'
-import './../assets/main.scss'
+import '@vuepic/vue-datepicker/dist/main.css';
+import './../assets/main.scss';
 
 const props = defineProps({
   countType: {
@@ -57,52 +63,48 @@ const rangeConfig = computed<RangeConfig>(() => {
     return {
       minRange: props.minRangeSelection,
       maxRange: props.maxRangeSelection,
-    }
+    };
   }
 
   if (props.minRangeSelection) {
-    return {
-      minRange: props.minRangeSelection,
-    }
+    return { minRange: props.minRangeSelection };
   }
 
   if (props.maxRangeSelection) {
-    return {
-      maxRange: props.maxRangeSelection,
-    }
+    return { maxRange: props.maxRangeSelection };
   }
 
   return {};
-})
+});
 
 onMounted(() => {
   isMobile.value = window.innerWidth < 750;
 
-  window.addEventListener("resize", () => {
+  window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth < 750;
   });
-})
+});
 
 const handleUpdateOnDatePicker = (modelValue: Date[] | null) => {
   emit('update:modelValue', modelValue);
-}
+};
 
 const handleClickOnBackBtn = () => {
   if (datePicker.value) {
     datePicker.value.closeMenu();
   }
-}
+};
 
 const handleClickOnClearBtn = () => {
   if (datePicker.value) {
     datePicker.value.updateInternalModelValue(null);
   }
-}
+};
 
 const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
   const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
   if (!day) {
-    return
+    return;
   }
 
   const selectedDate = new Date(instanceYear, instanceMonth, day);
@@ -111,19 +113,19 @@ const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: n
   }
 
   setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
-}
+};
 
 const handleMouseEnterOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
   const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
 
   if (!day) {
-    return
+    return;
   }
 
   const selectedDate = new Date(instanceYear, instanceMonth, day);
 
   setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
-}
+};
 
 const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selectedDate: Date) => {
   if (!rangeStart.value) {
@@ -134,54 +136,54 @@ const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selec
   let rangeCount = props.countType === CountType.DAY
     ? dayDiff + 1
     : dayDiff;
-  if (! rangeCount) {
+  if (!rangeCount) {
     rangeCount = 1;
   }
 
-    const message = props.countType === CountType.DAY
-      ? t('count.day', rangeCount)
-      : t('count.night', rangeCount);
+  const message = props.countType === CountType.DAY
+    ? t('count.day', rangeCount)
+    : t('count.night', rangeCount);
 
-  calendarItem.setAttribute('range-count', message)
-}
+  calendarItem.setAttribute('range-count', message);
+};
 
 const handleMonthYearUpdate = ({ instance, month, year }: UpdateMonthYearArgs) => {
   if (instance === 0) {
-    leftDesktopDayPickerMonth.value = month
-    leftDesktopDayPickerYear.value = year
+    leftDesktopDayPickerMonth.value = month;
+    leftDesktopDayPickerYear.value = year;
 
-    rightDesktopDayPickerMonth.value = month + 1
+    rightDesktopDayPickerMonth.value = month + 1;
   } else {
-    leftDesktopDayPickerMonth.value = month - 1
+    leftDesktopDayPickerMonth.value = month - 1;
 
-    rightDesktopDayPickerMonth.value = month
-    rightDesktopDayPickerYear.value = year
+    rightDesktopDayPickerMonth.value = month;
+    rightDesktopDayPickerYear.value = year;
   }
 
   addCalendarDateEvents();
-}
+};
 
 const handleOpen = () => {
   if (date.value && date.value.length === 2) {
-    leftDesktopDayPickerMonth.value = date.value[1].getMonth()
-    leftDesktopDayPickerYear.value = date.value[1].getFullYear()
+    leftDesktopDayPickerMonth.value = date.value[1].getMonth();
+    leftDesktopDayPickerYear.value = date.value[1].getFullYear();
 
-    rightDesktopDayPickerMonth.value = date.value[1].getMonth() + 1
-    rightDesktopDayPickerYear.value = date.value[1].getFullYear()
+    rightDesktopDayPickerMonth.value = date.value[1].getMonth() + 1;
+    rightDesktopDayPickerYear.value = date.value[1].getFullYear();
   }
 
-  addCalendarDateEvents()
-}
+  addCalendarDateEvents();
+};
 
 const handleClose = () => {
   rangeStart.value = null;
-}
+};
 
 const getDiffInDays = (initialDate: Date, finalDate: Date) => {
   const diffTime = Math.abs(finalDate.getTime() - initialDate.getTime());
 
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-}
+};
 
 const addCalendarDateEvents = async () => {
   if (isMobile.value) {
@@ -190,7 +192,7 @@ const addCalendarDateEvents = async () => {
 
   await nextTick();
 
-  const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar')
+  const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar');
   for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
     const calendarInstance = calendarInstances[calendarIdx];
     const calendarInstanceMonth = calendarIdx ? rightDesktopDayPickerMonth.value : leftDesktopDayPickerMonth.value;
@@ -198,30 +200,28 @@ const addCalendarDateEvents = async () => {
 
     await nextTick();
 
-    const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner')
+    const calendarItems = calendarInstance.getElementsByClassName('dp__cell_inner');
     for (let index = 0; index < calendarItems.length; index++) {
       await nextTick();
       const calendarItem = calendarItems[index];
 
       calendarItem.addEventListener('click', () => {
         handleClickOnCalendarItem(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-      })
+      });
       calendarItem.addEventListener('mouseenter', () => {
         handleMouseEnterOnCalendarItem(calendarItem, calendarInstanceMonth, calendarInstanceYear);
-      })
+      });
     }
   }
-}
+};
 
 const open = () => {
   if (datePicker.value) {
     datePicker.value.openMenu();
   }
-}
+};
 
-defineExpose({
-  open,
-})
+defineExpose({ open });
 </script>
 
 <template>
