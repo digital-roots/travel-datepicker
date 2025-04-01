@@ -35,30 +35,22 @@ const emit = defineEmits(['update:modelValue']);
 
 const { t, tm } = useI18n();
 
+const initialDate = props.minDate ?? new Date();
 const dayNames = tm('dayNameAbbreviations');
 const config = {
   mobileBreakpoint: 750,
   noSwipe: true,
 };
 
+const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
+
 const date = ref();
 const isMobile = ref(false);
-const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
 const rangeStart = ref<Date | null>(null);
-
-const initialDate = props.minDate ?? new Date();
 const leftDesktopDayPickerMonth = ref<number>(initialDate.getMonth());
 const leftDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 const rightDesktopDayPickerMonth = ref<number>(initialDate.getMonth() + 1);
 const rightDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
-
-onMounted(() => {
-  isMobile.value = window.innerWidth < 750;
-
-  window.addEventListener("resize", () => {
-    isMobile.value = window.innerWidth < 750;
-  });
-})
 
 const rangeConfig = computed<RangeConfig>(() => {
   if (props.minRangeSelection && props.maxRangeSelection) {
@@ -81,6 +73,14 @@ const rangeConfig = computed<RangeConfig>(() => {
   }
 
   return {};
+})
+
+onMounted(() => {
+  isMobile.value = window.innerWidth < 750;
+
+  window.addEventListener("resize", () => {
+    isMobile.value = window.innerWidth < 750;
+  });
 })
 
 const handleUpdateOnDatePicker = (modelValue: Date[] | null) => {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "types": "src/types/index.ts",
+  "types": "index.d.ts",
   "main": "dist/travel-datepicker.umd.cjs",
   "module": "dist/travel-datepicker.js",
   "browser": "dist/travel-datepicker.js",
@@ -11,7 +11,7 @@
   "style": "dist/travel-datepicker.css",
   "files": [
     "dist/*",
-    "src/types/index.ts"
+    "index.d.ts"
   ],
   "scripts": {
     "dev": "vite --host",
