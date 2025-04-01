@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import ArrowLeft from './icons/ArrowLeft.vue';
+import { ref, onMounted, useTemplateRef, nextTick, type PropType } from 'vue';
+import { type UpdateMonthYearArgs, CountType } from '@/types'
+import useI18n from '../composables/i18n';
 import '@vuepic/vue-datepicker/dist/main.css'
 import './../assets/main.scss'
-import ArrowLeft from './icons/ArrowLeft.vue';
-import { ref, onMounted, useTemplateRef, type PropType, nextTick } from 'vue';
-import { type UpdateMonthYearArgs, CountType } from './../types/index'
-import { useI18n } from 'vue-i18n';
-import { computed } from 'vue';
 
 const props = defineProps({
   countType: {
@@ -33,7 +33,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const {t} = useI18n();
+const { t, tm } = useI18n();
 
 const dayNames = [
   t('dayNameAbbreviations.sunday'),
