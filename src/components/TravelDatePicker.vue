@@ -35,15 +35,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const { t, tm } = useI18n();
 
-const dayNames = [
-  t('dayNameAbbreviations.sunday'),
-  t('dayNameAbbreviations.monday'),
-  t('dayNameAbbreviations.tuesday'),
-  t('dayNameAbbreviations.wednesday'),
-  t('dayNameAbbreviations.thursday'),
-  t('dayNameAbbreviations.friday'),
-  t('dayNameAbbreviations.saturday'),
-];
+const dayNames = tm('dayNameAbbreviations');
 const config = {
   mobileBreakpoint: 750,
   noSwipe: true,

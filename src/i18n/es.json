@@ -1,13 +1,13 @@
 {
-    "dayNameAbbreviations": {
-        "sunday": "Dom",
-        "monday": "Lun",
-        "tuesday": "Mar",
-        "wednesday": "Mié",
-        "thursday": "Jue",
-        "friday": "Vie",
-        "saturday": "Sáb"
-    },
+    "dayNameAbbreviations": [
+        "Dom",
+        "Lun",
+        "Mar",
+        "Mié",
+        "Jue",
+        "Vie",
+        "Sáb"
+    ],
     "count": {
         "day": "{count} día | {count} días",
         "night": "{count} noche | {count} noches"
