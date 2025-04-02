@@ -41,6 +41,7 @@ export declare type TravelDatePickerEmits = EmitFn<TravelDatePickerEmitsOptions>
 
 export interface TravelDatePickerProps {
   countType: CountType;
+  isRange: boolean;
   minDate?: Date;
   maxDate?: Date;
   minRangeSelection?: number;
