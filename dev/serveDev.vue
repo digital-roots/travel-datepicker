@@ -5,7 +5,7 @@ import {
   useTemplateRef,
 } from 'vue';
 import TravelDatepicker from '../src/components/TravelDatePicker.vue';
-import { CountType, PublicMethods } from '@/types';
+import { CountType, PublicMethods } from '../src/types';
 
 const defaultMinDate = new Date();
 defaultMinDate.setDate(defaultMinDate.getDate() + 2);
@@ -14,6 +14,7 @@ defaultMaxDate.setMonth(defaultMaxDate.getMonth() + 12);
 
 const datePicker = useTemplateRef<PublicMethods>('travel-datepicker');
 
+const isRange = ref<boolean>(true);
 const startD = ref('');
 const endD = ref('');
 
@@ -62,22 +63,26 @@ const onDateInputClick = () => {
   }
 };
 
-const handleUpdateOnDatePicker = (dateValue: Date[] | null) => {
-  if (! dateValue || ! dateValue.length) {
-      startD.value = '';
-      endD.value = '';
+const handleUpdateOnDatePicker = (dateValue: Date[] | Date | null) => {
+  if (!dateValue) {
+    startD.value = '';
+    endD.value = '';
 
-      return;
-    }
+    return;
+  }
 
+  if (Array.isArray(dateValue)) {
     const [fechaI, fechaF] = dateValue;
     const fechaID = fechaI ? formatDateString(fechaI) : '';
     const fechaFD = fechaF ? formatDateString(fechaF) : '';
 
     startD.value = fechaID;
     endD.value = fechaFD;
-}
+    return;
+  }
 
+  startD.value = formatDateString(dateValue);
+};
 const formatDateString = (dateObj: Date) => {
   let day = dateObj.getDate().toString();
   if (day.length < 2) {
@@ -108,6 +113,7 @@ const formatDateString = (dateObj: Date) => {
           @click="onDateInputClick"
         />
         <input
+          v-if="isRange"
           id=""
           v-model="endD"
           type="text"
@@ -115,6 +121,18 @@ const formatDateString = (dateObj: Date) => {
           @click="onDateInputClick"
         />
         <TravelDatepicker
+          v-if="isRange"
+          ref="travel-datepicker"
+          :is-range="isRange"
+          :count-type="countType"
+          :min-date="formattedMinDate"
+          :max-date="formattedMaxDate"
+          :min-range-selection="minRange"
+          :max-range-selection="maxRange"
+          @update:model-value="handleUpdateOnDatePicker"
+        />
+        <TravelDatepicker
+          v-else
           ref="travel-datepicker"
           :count-type="countType"
           :min-date="formattedMinDate"
@@ -145,6 +163,16 @@ const formatDateString = (dateObj: Date) => {
                 Nights
               </option>
             </select>
+          </div>
+          <div class="prop-input">
+            <label for="isRange">
+              Range calendar
+            </label>
+            <input
+              v-model="isRange"
+              name="isRange"
+              type="checkbox"
+            />
           </div>
           <div class="prop-input">
             <label for="enableMinDate">
@@ -213,6 +241,7 @@ const formatDateString = (dateObj: Date) => {
           <code>
             {<br />
             "countType" : "{{ countType }}",<br />
+            "isRange" : "{{ isRange }}",<br />
             "minDate" : "{{ formattedMinDate }}",<br />
             "maxDate" : "{{ formattedMaxDate }}"<br />
             "minRangeSelection" : "{{ minRange }}"<br />
