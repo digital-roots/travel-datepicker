@@ -1,47 +1,40 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
-import ArrowLeft from './icons/ArrowLeft.vue';
 import {
   ref,
   onMounted,
   useTemplateRef,
   nextTick,
-  type PropType,
+  computed,
 } from 'vue';
+import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import ArrowLeft from '@/components/icons/ArrowLeft.vue';
 import { type UpdateMonthYearArgs, CountType } from '@/types';
-import useI18n from '../composables/i18n';
+import useI18n from '@/composables/i18n';
 import '@vuepic/vue-datepicker/dist/main.css';
-import './../assets/main.scss';
-
-const props = defineProps({
-  countType: {
-    type: String as PropType<CountType>,
-    required: true,
-  },
-  minDate: {
-    type: Date,
-    default: undefined,
-  },
-  maxDate: {
-    type: Date,
-    default: undefined,
-  },
-  minRangeSelection: {
-    type: Number,
-    default: undefined,
-  },
-  maxRangeSelection: {
-    type: Number,
-    default: undefined,
-  },
-});
-
-const emit = defineEmits(['update:modelValue']);
+import '@/assets/main.scss';
 
 const { t, tm } = useI18n();
 
-const initialDate = props.minDate ?? new Date();
+const {
+  countType,
+  isRange = false,
+  maxRangeSelection,
+  minDate,
+  minRangeSelection,
+} = defineProps<{
+  countType: CountType;
+  isRange?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
+  minRangeSelection?: number;
+  maxRangeSelection?: number;
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:model-value', value: Date[] | null): void;
+}>();
+
+const initialDate = minDate ?? new Date();
 const dayNames = tm('dayNameAbbreviations');
 const config = {
   mobileBreakpoint: 750,
@@ -58,23 +51,34 @@ const leftDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 const rightDesktopDayPickerMonth = ref<number>(initialDate.getMonth() + 1);
 const rightDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 
-const rangeConfig = computed<RangeConfig>(() => {
-  if (props.minRangeSelection && props.maxRangeSelection) {
+const rangeConfig = computed<RangeConfig | boolean>(() => {
+  if (!isRange) {
+    return false;
+  }
+
+  if (minRangeSelection && maxRangeSelection) {
     return {
-      minRange: props.minRangeSelection,
-      maxRange: props.maxRangeSelection,
+      minRange: minRangeSelection,
+      maxRange: maxRangeSelection,
     };
   }
 
-  if (props.minRangeSelection) {
-    return { minRange: props.minRangeSelection };
+  if (minRangeSelection) {
+    return { minRange: minRangeSelection };
   }
 
-  if (props.maxRangeSelection) {
-    return { maxRange: props.maxRangeSelection };
+  if (maxRangeSelection) {
+    return { maxRange: maxRangeSelection };
   }
 
   return {};
+});
+const multiCalendars = computed<number | boolean>(() => {
+  if (!isRange) {
+    return 2;
+  }
+
+  return isMobile.value ? 12 : 2;
 });
 
 onMounted(() => {
@@ -86,21 +90,18 @@ onMounted(() => {
 });
 
 const handleUpdateOnDatePicker = (modelValue: Date[] | null) => {
-  emit('update:modelValue', modelValue);
+  emit('update:model-value', modelValue);
 };
-
 const handleClickOnBackBtn = () => {
   if (datePicker.value) {
     datePicker.value.closeMenu();
   }
 };
-
 const handleClickOnClearBtn = () => {
   if (datePicker.value) {
     datePicker.value.updateInternalModelValue(null);
   }
 };
-
 const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
   const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
   if (!day) {
@@ -114,7 +115,6 @@ const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: n
 
   setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
 };
-
 const handleMouseEnterOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
   const day = calendarItem.textContent ? parseInt(calendarItem.textContent) : null;
 
@@ -126,27 +126,6 @@ const handleMouseEnterOnCalendarItem = async (calendarItem: Element, instanceMon
 
   setRangeCountAttributeToCalendarItem(calendarItem, selectedDate);
 };
-
-const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selectedDate: Date) => {
-  if (!rangeStart.value) {
-    return;
-  }
-
-  const dayDiff = getDiffInDays(rangeStart.value, selectedDate);
-  let rangeCount = props.countType === CountType.DAY
-    ? dayDiff + 1
-    : dayDiff;
-  if (!rangeCount) {
-    rangeCount = 1;
-  }
-
-  const message = props.countType === CountType.DAY
-    ? t('count.day', rangeCount)
-    : t('count.night', rangeCount);
-
-  calendarItem.setAttribute('range-count', message);
-};
-
 const handleMonthYearUpdate = ({ instance, month, year }: UpdateMonthYearArgs) => {
   if (instance === 0) {
     leftDesktopDayPickerMonth.value = month;
@@ -162,9 +141,12 @@ const handleMonthYearUpdate = ({ instance, month, year }: UpdateMonthYearArgs) =
 
   addCalendarDateEvents();
 };
-
 const handleOpen = () => {
-  if (date.value && date.value.length === 2) {
+  if (
+    date.value
+    && Array.isArray(date.value)
+    && date.value.length === 2
+  ) {
     leftDesktopDayPickerMonth.value = date.value[1].getMonth();
     leftDesktopDayPickerYear.value = date.value[1].getFullYear();
 
@@ -174,17 +156,34 @@ const handleOpen = () => {
 
   addCalendarDateEvents();
 };
-
 const handleClose = () => {
   rangeStart.value = null;
 };
 
+const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selectedDate: Date) => {
+  if (!rangeStart.value) {
+    return;
+  }
+
+  const dayDiff = getDiffInDays(rangeStart.value, selectedDate);
+  let rangeCount = countType === CountType.DAY
+    ? dayDiff + 1
+    : dayDiff;
+  if (!rangeCount) {
+    rangeCount = 1;
+  }
+
+  const message = countType === CountType.DAY
+    ? t('count.day', rangeCount)
+    : t('count.night', rangeCount);
+
+  calendarItem.setAttribute('range-count', message);
+};
 const getDiffInDays = (initialDate: Date, finalDate: Date) => {
   const diffTime = Math.abs(finalDate.getTime() - initialDate.getTime());
 
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 };
-
 const addCalendarDateEvents = async () => {
   if (isMobile.value) {
     return;
@@ -214,7 +213,6 @@ const addCalendarDateEvents = async () => {
     }
   }
 };
-
 const open = () => {
   if (datePicker.value) {
     datePicker.value.openMenu();
@@ -239,7 +237,7 @@ defineExpose({ open });
     :range="rangeConfig"
     :auto-apply="!isMobile"
     :enable-time-picker="false"
-    :multi-calendars="isMobile ? 12 : 2"
+    :multi-calendars="multiCalendars"
     :day-names="dayNames"
     :min-date="minDate"
     :max-date="maxDate"
