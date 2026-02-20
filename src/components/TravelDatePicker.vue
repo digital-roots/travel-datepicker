@@ -74,10 +74,6 @@ const rangeConfig = computed<RangeConfig | boolean>(() => {
   return {};
 });
 const multiCalendars = computed<number | boolean>(() => {
-  if (!isRange) {
-    return 2;
-  }
-
   return isMobile.value ? 12 : 2;
 });
 
