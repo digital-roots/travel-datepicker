@@ -6,7 +6,8 @@ import {
   nextTick,
   computed,
 } from 'vue';
-import VueDatePicker, { type RangeConfig, type PublicMethods as VueDatePickerMethods } from '@vuepic/vue-datepicker';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import { es } from 'date-fns/locale';
 import ArrowLeft from '@/components/icons/ArrowLeft.vue';
 import { type UpdateMonthYearArgs, CountType } from '@/types';
 import useI18n from '@/composables/i18n';
@@ -18,9 +19,10 @@ const { t, tm } = useI18n();
 const {
   countType,
   isRange = false,
-  maxRangeSelection,
-  minDate,
-  minRangeSelection,
+  maxRangeSelection = undefined,
+  minDate = undefined,
+  maxDate = undefined,
+  minRangeSelection = undefined,
 } = defineProps<{
   countType: CountType;
   isRange?: boolean;
@@ -41,7 +43,7 @@ const config = {
   noSwipe: true,
 };
 
-const datePicker = useTemplateRef<VueDatePickerMethods>('datepicker');
+const datePicker = useTemplateRef<InstanceType<typeof VueDatePicker>>('datepicker');
 
 const date = ref();
 const isMobile = ref(false);
@@ -51,7 +53,7 @@ const leftDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 const rightDesktopDayPickerMonth = ref<number>(initialDate.getMonth() + 1);
 const rightDesktopDayPickerYear = ref<number>(initialDate.getFullYear());
 
-const rangeConfig = computed<RangeConfig | boolean>(() => {
+const rangeConfig = computed(() => {
   if (!isRange) {
     return false;
   }
@@ -71,7 +73,7 @@ const rangeConfig = computed<RangeConfig | boolean>(() => {
     return { maxRange: maxRangeSelection };
   }
 
-  return {};
+  return true;
 });
 const multiCalendars = computed<number | boolean>(() => {
   return isMobile.value ? 12 : 2;
@@ -94,8 +96,9 @@ const handleClickOnBackBtn = () => {
   }
 };
 const handleClickOnClearBtn = () => {
+  date.value = null;
   if (datePicker.value) {
-    datePicker.value.updateInternalModelValue(null);
+    datePicker.value.closeMenu();
   }
 };
 const handleClickOnCalendarItem = async (calendarItem: Element, instanceMonth: number, instanceYear: number) => {
@@ -190,6 +193,10 @@ const addCalendarDateEvents = async () => {
   const calendarInstances = document.querySelectorAll('.dp__menu_inner .dp__instance_calendar');
   for (let calendarIdx = 0; calendarIdx < calendarInstances.length; calendarIdx++) {
     const calendarInstance = calendarInstances[calendarIdx];
+    if (!calendarInstance) {
+      continue;
+    }
+
     const calendarInstanceMonth = calendarIdx ? rightDesktopDayPickerMonth.value : leftDesktopDayPickerMonth.value;
     const calendarInstanceYear = calendarIdx ? rightDesktopDayPickerYear.value : leftDesktopDayPickerYear.value;
 
@@ -199,6 +206,9 @@ const addCalendarDateEvents = async () => {
     for (let index = 0; index < calendarItems.length; index++) {
       await nextTick();
       const calendarItem = calendarItems[index];
+      if (!calendarItem) {
+        continue;
+      }
 
       calendarItem.addEventListener('click', () => {
         handleClickOnCalendarItem(calendarItem, calendarInstanceMonth, calendarInstanceYear);
@@ -224,7 +234,7 @@ defineExpose({ open });
     v-model="date"
     class="travel-datepicker"
     month-name-format="long"
-    locale="es"
+    :locale="es"
     hide-offset-dates
     prevent-min-max-navigation
     week-start="0"
