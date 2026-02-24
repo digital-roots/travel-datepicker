@@ -21,6 +21,7 @@ export default defineConfigWithVueTs(
 
   eslint.configs.recommended,
   stylistic.configs.customize({
+    indent: 2,
     arrowParens: true,
     braceStyle: '1tbs',
     jsx: false,
