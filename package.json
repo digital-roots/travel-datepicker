@@ -1,6 +1,6 @@
 {
   "name": "@digital-roots/travel-datepicker",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "types": "index.d.ts",
   "main": "dist/travel-datepicker.umd.cjs",
@@ -14,9 +14,9 @@
   ],
   "scripts": {
     "dev": "vite --host",
-    "build": "run-s type-check build:lib",
+    "build": "npm run type-check && npm run build:lib",
     "preview": "vite preview",
-    "build:lib": "run-s build:es build:browser",
+    "build:lib": "npm run build:es && npm run build:browser",
     "build:es": "vite build",
     "build:browser": "vite -f iife build",
     "type-check": "vue-tsc --build",
@@ -27,11 +27,11 @@
   },
   "dependencies": {
     "@vuepic/vue-datepicker": "^12.1.0",
-    "vue": "^3.5.13",
+    "vue": "^3.5.29",
     "vue-i18n": "^11.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.3",
+    "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.9.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/minimist": "^1.2.5",
@@ -39,11 +39,10 @@
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/eslint-config-typescript": "^14.3.0",
     "@vue/tsconfig": "^0.8.1",
-    "eslint": "^9.39.3",
+    "eslint": "^10.0.2",
     "eslint-plugin-vue": "^10.8.0",
     "jiti": "^2.4.2",
     "minimist": "^1.2.8",
-    "npm-run-all2": "^8.0.4",
     "postcss-scss": "^4.0.9",
     "sass": "^1.84.0",
     "sass-loader": "^16.0.4",

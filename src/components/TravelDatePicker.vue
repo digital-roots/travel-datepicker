@@ -154,9 +154,25 @@ const handleOpen = () => {
   }
 
   addCalendarDateEvents();
+
+  if (isMobile.value) {
+    disableMonthYearSelectors();
+  }
 };
 const handleClose = () => {
   rangeStart.value = null;
+};
+
+const disableMonthYearSelectors = async () => {
+  await nextTick();
+
+  const monthYearSelectors = document.querySelectorAll('.dp__month_year_select');
+  monthYearSelectors.forEach((selector) => {
+    selector.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, { capture: true });
+  });
 };
 
 const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selectedDate: Date) => {
@@ -233,16 +249,16 @@ defineExpose({ open });
     ref="datepicker"
     v-model="date"
     class="travel-datepicker"
-    month-name-format="long"
+    :formats="{ month: 'MMMM', input: 'dd/MM/yyyy', preview: 'dd/MM/yyyy' }"
     :locale="es"
+    :teleport="false"
     hide-offset-dates
     prevent-min-max-navigation
     week-start="0"
-    :cancel-text="t('buttons.cancel')"
-    :select-text="t('buttons.ready')"
     :range="rangeConfig"
     :auto-apply="!isMobile"
-    :enable-time-picker="false"
+    :action-row="{ selectBtnLabel: t('buttons.ready'), cancelBtnLabel: t('buttons.cancel') }"
+    :time-config="{ enableTimePicker: false }"
     :multi-calendars="multiCalendars"
     :day-names="dayNames"
     :min-date="minDate"
