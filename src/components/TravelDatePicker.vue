@@ -195,7 +195,13 @@ const setRangeCountAttributeToCalendarItem = async (calendarItem: Element, selec
   calendarItem.setAttribute('range-count', message);
 };
 const getDiffInDays = (initialDate: Date, finalDate: Date) => {
-  const diffTime = Math.abs(finalDate.getTime() - initialDate.getTime());
+  const initial = new Date(initialDate);
+  const final = new Date(finalDate);
+
+  initial.setHours(0, 0, 0, 0);
+  final.setHours(0, 0, 0, 0);
+
+  const diffTime = Math.abs(final.getTime() - initial.getTime());
 
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 };
