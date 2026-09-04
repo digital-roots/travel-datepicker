@@ -1,6 +1,6 @@
 {
   "name": "@digital-roots/travel-datepicker",
-  "version": "1.2.1",
+  "version": "1.2.13",
   "type": "module",
   "types": "index.d.ts",
   "main": "dist/travel-datepicker.umd.cjs",
@@ -26,7 +26,7 @@
     "stylelint-fix": "stylelint \"**/*.scss\" --fix"
   },
   "dependencies": {
-    "@vuepic/vue-datepicker": "^14.0.0",
+    "@vuepic/vue-datepicker": "^12.0.0",
     "vue": "^3.5.42",
     "vue-i18n": "^11.4.10"
   },
