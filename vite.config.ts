@@ -17,7 +17,7 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       formats: f === 'iife' ? ['iife'] : ['es', 'umd'],
-      entry: resolve(__dirname, 'src', 'entry.ts'),
+      entry: resolve(import.meta.dirname, 'src', 'entry.ts'),
       name: 'TravelDatePicker',
       fileName: 'travel-datepicker',
     },
